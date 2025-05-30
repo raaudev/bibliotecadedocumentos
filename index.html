@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="default">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Biblioteca de documentos escolares com regulamentos, calendários e listas de materiais">
+    <meta name="keywords" content="biblioteca, documentos, escola, regulamentos, calendário escolar, lista de materiais">
+    <meta property="og:title" content="Biblioteca de Documentos Escolares">
+    <meta property="og:description" content="Acesse e baixe documentos escolares como regulamentos, calendários e listas de materiais">
+    <meta property="og:type" content="website">
+    <title>Biblioteca de Documentos Escolares</title>
+    
+    <!-- Manifesto PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#3498db">
+    <link rel="apple-touch-icon" href="assets/icons/app-icon-192.png">
+    
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <link rel="stylesheet" href="css/reading-mode.css">
+    <link rel="stylesheet" href="css/features.css">
+    <link rel="stylesheet" href="css/print.css" media="print">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+<body>
+    <div class="container" data-print-date="">
+        <header>
+            <h1>Biblioteca de Documentos</h1>
+            <div class="theme-toggle">
+                <button id="themeSelectorToggle" aria-label="Personalizar tema">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2"></path>
+                        <path d="M12 21v2"></path>
+                        <path d="M4.22 4.22l1.42 1.42"></path>
+                        <path d="M18.36 18.36l1.42 1.42"></path>
+                        <path d="M1 12h2"></path>
+                        <path d="M21 12h2"></path>
+                        <path d="M4.22 19.78l1.42-1.42"></path>
+                        <path d="M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+                <button id="notificationToggle" aria-label="Notificações" class="notification-toggle">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Pesquisar documentos..." aria-label="Campo de pesquisa">
+                <button id="searchButton" aria-label="Botão de pesquisa">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button id="advancedSearchToggle" class="advanced-search-toggle" aria-label="Pesquisa avançada">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Pesquisa Avançada -->
+        <div id="advancedSearch" class="advanced-search">
+            <div class="advanced-search-header">
+                <h3>Pesquisa Avançada</h3>
+                <button id="advancedSearchClose" class="advanced-search-close" aria-label="Fechar pesquisa avançada">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="advancedSearchForm" class="advanced-search-form">
+                <div class="advanced-search-field">
+                    <label for="searchTitle">Título</label>
+                    <input type="text" id="searchTitle" placeholder="Buscar no título">
+                </div>
+                <div class="advanced-search-field">
+                    <label for="searchCategory">Categoria</label>
+                    <select id="searchCategory">
+                        <option value="">Todas as categorias</option>
+                        <option value="regulamentos">Regulamentos</option>
+                        <option value="calendario">Calendário Escolar</option>
+                        <option value="materiais">Listas de Materiais</option>
+                    </select>
+                </div>
+                <div class="advanced-search-field">
+                    <label for="searchDateFrom">Data (de)</label>
+                    <input type="date" id="searchDateFrom">
+                </div>
+                <div class="advanced-search-field">
+                    <label for="searchDateTo">Data (até)</label>
+                    <input type="date" id="searchDateTo">
+                </div>
+                <div class="advanced-search-field">
+                    <label for="searchSize">Tamanho do arquivo</label>
+                    <select id="searchSize">
+                        <option value="">Qualquer tamanho</option>
+                        <option value="small">Pequeno (< 1MB)</option>
+                        <option value="medium">Médio (1-5MB)</option>
+                        <option value="large">Grande (> 5MB)</option>
+                    </select>
+                </div>
+                <div class="advanced-search-actions">
+                    <button type="reset" class="reset-button">Limpar</button>
+                    <button type="submit" class="search-button">Pesquisar</button>
+                </div>
+            </form>
+        </div>
+
+        <nav class="breadcrumb" aria-label="Navegação estrutural">
+            <ol>
+                <li><a href="#" aria-current="page">Início</a></li>
+                <li><span id="currentCategory">Todos os documentos</span></li>
+            </ol>
+            <div class="export-container">
+                <label for="exportFormat">Exportar lista:</label>
+                <select id="exportFormat">
+                    <option value="csv">CSV</option>
+                    <option value="pdf">PDF</option>
+                </select>
+                <button id="exportButton" class="export-button ripple">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Exportar
+                </button>
+            </div>
+        </nav>
+
+        <div class="filter-container" role="tablist" aria-label="Filtros de categoria">
+            <button class="filter-button active ripple" data-category="todos" role="tab" aria-selected="true" aria-controls="todos">Todos</button>
+            <button class="filter-button ripple" data-category="regulamentos" role="tab" aria-selected="false" aria-controls="regulamentos">Regulamentos</button>
+            <button class="filter-button ripple" data-category="calendario" role="tab" aria-selected="false" aria-controls="calendario">Calendário Escolar</button>
+            <button class="filter-button ripple" data-category="materiais" role="tab" aria-selected="false" aria-controls="materiais">Listas de Materiais</button>
+        </div>
+
+        <!-- Categorias Personalizadas -->
+        <div id="customCategories" class="custom-categories">
+            <div class="custom-categories-header">
+                <h2>Minhas Categorias</h2>
+                <button id="addCategoryButton" class="add-category-button ripple">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+                    Nova Categoria
+                </button>
+            </div>
+            <div id="customCategoriesList" class="custom-categories-list">
+                <!-- Categorias personalizadas serão adicionadas aqui via JavaScript -->
+                <div class="custom-category">
+                    Importantes
+                    <button class="remove-category" aria-label="Remover categoria">×</button>
+                </div>
+                <div class="custom-category">
+                    Para Revisar
+                    <button class="remove-category" aria-label="Remover categoria">×</button>
+                </div>
+            </div>
+        </div>
+
+        <main class="documents-container">
+            <!-- Regulamentos -->
+            <section class="category-section" id="regulamentos" role="tabpanel" aria-labelledby="tab-regulamentos">
+                <h2>Regulamentos</h2>
+                <div class="documents-grid">
+                    <article class="document-card" data-category="regulamentos">
+                        <div class="document-icon">
+                            <svg class="icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <path d="M9 15L9 9"></path>
+                                <path d="M12 12L12 15"></path>
+                                <path d="M15 15L15 12"></path>
+                                <path d="M9 12H12"></path>
+                                <path d="M15 9H15"></path>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <h3>Regimento Escolar</h3>
+                            <p>Documento oficial com as normas e diretrizes da instituição escolar.</p>
+                            <div class="document-meta">
+                                <span class="document-date">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    Atualizado: Jan 2025
+                                </span>
+                                <span class="document-size">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    PDF - 2.3 MB
+                                </span>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="preview-button ripple" data-document="docs/regimento-escolar.pdf" data-title="Regimento Escolar" aria-label="Visualizar Regimento Escolar">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Visualizar
+                            </button>
+                            <a href="docs/regimento-escolar.pdf" download class="download-button ripple" aria-label="Baixar Regimento Escolar">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Download
+                            </a>
+                            <button class="favorite-button" data-id="regimento-escolar" aria-label="Adicionar aos favoritos">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="share-button" data-id="regimento-escolar" data-title="Regimento Escolar" data-url="docs/regimento-escolar.pdf" aria-label="Compartilhar">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                                    <circle cx="5" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                            <button class="comment-button" data-id="regimento-escolar" aria-label="Comentários">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
+                            <button class="reading-mode-toggle" data-document="regimento-escolar" data-title="Regimento Escolar" aria-label="Modo de leitura">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                                    <path d="M2 2l7.586 7.586"></path>
+                                    <circle cx="11" cy="11" r="2"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Calendário Escolar -->
+            <section class="category-section" id="calendario" role="tabpanel" aria-labelledby="tab-calendario">
+                <h2>Calendário Escolar</h2>
+                <div class="documents-grid">
+                    <article class="document-card" data-category="calendario">
+                        <div class="document-icon">
+                            <svg class="icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <h3>Calendário 2025</h3>
+                            <p>Calendário oficial com datas de aulas, eventos e feriados para o ano letivo de 2025.</p>
+                            <div class="document-meta">
+                                <span class="document-date">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    Atualizado: Dez 2024
+                                </span>
+                                <span class="document-size">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    PDF - 1.5 MB
+                                </span>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="preview-button ripple" data-document="docs/calendario-2025.pdf" data-title="Calendário 2025" aria-label="Visualizar Calendário 2025">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Visualizar
+                            </button>
+                            <a href="docs/calendario-2025.pdf" download class="download-button ripple" aria-label="Baixar Calendário 2025">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Download
+                            </a>
+                            <button class="favorite-button" data-id="calendario-2025" aria-label="Adicionar aos favoritos">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="share-button" data-id="calendario-2025" data-title="Calendário 2025" data-url="docs/calendario-2025.pdf" aria-label="Compartilhar">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                                    <circle cx="5" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                            <button class="comment-button" data-id="calendario-2025" aria-label="Comentários">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
+                            <button class="reading-mode-toggle" data-document="calendario-2025" data-title="Calendário 2025" aria-label="Modo de leitura">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                                    <path d="M2 2l7.586 7.586"></path>
+                                    <circle cx="11" cy="11" r="2"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Listas de Materiais -->
+            <section class="category-section" id="materiais" role="tabpanel" aria-labelledby="tab-materiais">
+                <h2>Listas de Materiais</h2>
+                <div class="documents-grid">
+                    <article class="document-card" data-category="materiais">
+                        <div class="document-icon">
+                            <svg class="icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </div>
+                        <div class="document-info">
+                            <h3>Lista de Material - 6º Ano</h3>
+                            <p>Lista completa de materiais necessários para os alunos do 6º ano do Ensino Fundamental.</p>
+                            <div class="document-meta">
+                                <span class="document-date">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                                    </svg>
+                                    Atualizado: Nov 2024
+                                </span>
+                                <span class="document-size">
+                                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                    </svg>
+                                    PDF - 0.8 MB
+                                </span>
+                            </div>
+                        </div>
+                        <div class="document-actions">
+                            <button class="preview-button ripple" data-document="docs/lista-material-6ano.pdf" data-title="Lista de Material - 6º Ano" aria-label="Visualizar Lista de Material - 6º Ano">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Visualizar
+                            </button>
+                            <a href="docs/lista-material-6ano.pdf" download class="download-button ripple" aria-label="Baixar Lista de Material - 6º Ano">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Download
+                            </a>
+                            <button class="favorite-button" data-id="lista-material-6ano" aria-label="Adicionar aos favoritos">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="share-button" data-id="lista-material-6ano" data-title="Lista de Material - 6º Ano" data-url="docs/lista-material-6ano.pdf" aria-label="Compartilhar">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 11a9 9 0 0 1 9 9"></path>
+                                    <path d="M4 4a16 16 0 0 1 16 16"></path>
+                                    <circle cx="5" cy="19" r="1"></circle>
+                                </svg>
+                            </button>
+                            <button class="comment-button" data-id="lista-material-6ano" aria-label="Comentários">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </button>
+                            <button class="reading-mode-toggle" data-document="lista-material-6ano" data-title="Lista de Material - 6º Ano" aria-label="Modo de leitura">
+                                <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                                    <path d="M2 2l7.586 7.586"></path>
+                                    <circle cx="11" cy="11" r="2"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal de Visualização -->
+        <div id="previewModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Visualização do Documento</h2>
+                    <button id="closeModal" aria-label="Fechar modal">
+                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="pdfPreview" class="pdf-container">
+                        <div class="loading-indicator">
+                            <div class="loading-spinner"></div>
+                            <p>Carregando documento...</p>
+                        </div>
+                        <iframe id="pdfFrame" title="Visualização do documento"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Comentários -->
+        <div id="commentModal" class="comment-modal">
+            <div class="comment-container">
+                <div class="comment-header">
+                    <h2>Comentários</h2>
+                    <button id="commentClose" class="comment-close" aria-label="Fechar comentários">
+                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="commentForm" class="comment-form">
+                    <textarea id="commentText" placeholder="Adicione seu comentário..." required></textarea>
+                    <button type="submit" class="ripple">Enviar Comentário</button>
+                </form>
+                <div id="commentsList" class="comments-list">
+                    <p class="empty-comments">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Adicionar Categoria -->
+        <div id="addCategoryModal" class="add-category-modal">
+            <div class="add-category-container">
+                <div class="add-category-header">
+                    <h2>Nova Categoria</h2>
+                    <button id="addCategoryClose" class="add-category-close" aria-label="Fechar">
+                        <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <form id="addCategoryForm" class="add-category-form">
+                    <input type="text" id="categoryName" placeholder="Nome da categoria" required>
+                    <button type="submit" class="ripple">Adicionar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Menu de Compartilhamento -->
+        <div id="shareMenu" class="share-menu">
+            <h3>Compartilhar</h3>
+            <div class="share-options">
+                <a href="#" id="whatsappShare" class="share-option whatsapp">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                    WhatsApp
+                </a>
+                <a href="#" id="emailShare" class="share-option email">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    E-mail
+                </a>
+                <button id="copyLink" class="share-option copy">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copiar Link
+                </button>
+            </div>
+        </div>
+
+        <!-- Centro de Notificações -->
+        <div id="notificationCenter" class="notification-center">
+            <div class="notification-center-header">
+                <h3>Notificações</h3>
+                <button id="notificationCenterClose" class="notification-center-close" aria-label="Fechar notificações">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <ul class="notification-list">
+                <li class="notification-item unread">
+                    <div class="notification-title">Novo documento adicionado</div>
+                    <div class="notification-message">Lista de Material - 7º Ano foi adicionado à biblioteca.</div>
+                    <div class="notification-time">Hoje, 10:30</div>
+                    <div class="notification-actions">
+                        <button class="notification-action">Ver documento</button>
+                    </div>
+                </li>
+                <li class="notification-item unread">
+                    <div class="notification-title">Documento atualizado</div>
+                    <div class="notification-message">Regimento Escolar foi atualizado com novas informações.</div>
+                    <div class="notification-time">Ontem, 15:45</div>
+                    <div class="notification-actions">
+                        <button class="notification-action">Ver documento</button>
+                    </div>
+                </li>
+                <li class="notification-item unread">
+                    <div class="notification-title">Novo comentário</div>
+                    <div class="notification-message">Um novo comentário foi adicionado ao Calendário 2025.</div>
+                    <div class="notification-time">27/05/2025, 09:15</div>
+                    <div class="notification-actions">
+                        <button class="notification-action">Ver comentários</button>
+                    </div>
+                </li>
+                <li class="notification-item">
+                    <div class="notification-title">Documento adicionado aos favoritos</div>
+                    <div class="notification-message">Você adicionou Lista de Material - 6º Ano aos favoritos.</div>
+                    <div class="notification-time">25/05/2025, 14:20</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Modo de Leitura -->
+        <div id="readingMode" class="reading-mode" data-font-size="medium" data-line-spacing="comfortable" data-theme="light">
+            <div class="reading-mode-header">
+                <h2 id="readingModeTitle" class="reading-mode-title">Título do Documento</h2>
+                <button id="readingModeClose" class="reading-mode-close" aria-label="Fechar modo de leitura">
+                    <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div id="readingModeContent" class="reading-mode-content">
+                <!-- Conteúdo do documento será carregado aqui -->
+            </div>
+            <div class="reading-mode-toolbar">
+                <button class="reading-mode-tool font-size-button" data-size="small" aria-label="Tamanho de fonte pequeno">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <text x="6" y="16" font-size="12" font-family="sans-serif">A</text>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool font-size-button active" data-size="medium" aria-label="Tamanho de fonte médio">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <text x="6" y="16" font-size="14" font-family="sans-serif">A</text>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool font-size-button" data-size="large" aria-label="Tamanho de fonte grande">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <text x="6" y="16" font-size="16" font-family="sans-serif">A</text>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool line-spacing-button" data-spacing="normal" aria-label="Espaçamento normal">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="8" x2="19" y2="8"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <line x1="5" y1="16" x2="19" y2="16"></line>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool line-spacing-button active" data-spacing="comfortable" aria-label="Espaçamento confortável">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="7" x2="19" y2="7"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <line x1="5" y1="17" x2="19" y2="17"></line>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool line-spacing-button" data-spacing="spacious" aria-label="Espaçamento amplo">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="6" x2="19" y2="6"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <line x1="5" y1="18" x2="19" y2="18"></line>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool reading-theme-button active" data-theme="light" aria-label="Tema claro">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2"></path>
+                        <path d="M12 21v2"></path>
+                        <path d="M4.22 4.22l1.42 1.42"></path>
+                        <path d="M18.36 18.36l1.42 1.42"></path>
+                        <path d="M1 12h2"></path>
+                        <path d="M21 12h2"></path>
+                        <path d="M4.22 19.78l1.42-1.42"></path>
+                        <path d="M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool reading-theme-button" data-theme="sepia" aria-label="Tema sépia">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                        <path d="M9 9h6"></path>
+                        <path d="M9 13h6"></path>
+                        <path d="M9 17h6"></path>
+                    </svg>
+                </button>
+                <button class="reading-mode-tool reading-theme-button" data-theme="dark" aria-label="Tema escuro">
+                    <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Seletor de Temas -->
+        <div id="themeSelector" class="theme-selector">
+            <h3>Escolha um tema</h3>
+            <div class="theme-options">
+                <div class="theme-option active" data-theme="default">
+                    <div class="color-preview default"></div>
+                    <span>Padrão</span>
+                </div>
+                <div class="theme-option" data-theme="green">
+                    <div class="color-preview green"></div>
+                    <span>Verde</span>
+                </div>
+                <div class="theme-option" data-theme="purple">
+                    <div class="color-preview purple"></div>
+                    <span>Roxo</span>
+                </div>
+                <div class="theme-option" data-theme="orange">
+                    <div class="color-preview orange"></div>
+                    <span>Laranja</span>
+                </div>
+                <div class="theme-option" data-theme="dark">
+                    <div class="color-preview dark"></div>
+                    <span>Escuro</span>
+                </div>
+                <div class="theme-option" data-theme="high-contrast">
+                    <div class="color-preview high-contrast"></div>
+                    <span>Alto Contraste</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Favoritos -->
+        <section id="favorites" class="favorites-section">
+            <h2>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="#f1c40f"></polygon>
+                </svg>
+                Meus Favoritos
+            </h2>
+            <div id="favoritesContainer" class="documents-grid">
+                <p class="empty-favorites">Você ainda não adicionou documentos aos favoritos.</p>
+            </div>
+        </section>
+
+        <!-- Histórico de Visualizações -->
+        <section id="history" class="history-section">
+            <h2>
+                <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Visualizados Recentemente
+            </h2>
+            <div id="historyContainer" class="documents-grid">
+                <p class="empty-history">Nenhum documento visualizado recentemente.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Biblioteca de Documentos</h3>
+                <p>Acesse e baixe documentos escolares importantes.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="#regulamentos">Regulamentos</a></li>
+                    <li><a href="#calendario">Calendário Escolar</a></li>
+                    <li><a href="#materiais">Listas de Materiais</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contato</h3>
+                <p>
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    biblioteca@escola.edu.br
+                </p>
+                <p>
+                    <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    (11) 1234-5678
+                </p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Biblioteca de Documentos Escolares. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Página Offline -->
+    <div id="offlinePage" style="display: none;">
+        <h1>Você está offline</h1>
+        <p>Não foi possível conectar à internet. Alguns recursos podem não estar disponíveis.</p>
+        <div id="offlineDocuments">
+            <!-- Documentos disponíveis offline serão listados aqui -->
+        </div>
+    </div>
+
+    <!-- Notificações -->
+    <div id="notification" class="notification">
+        <div class="notification-content">
+            <svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span id="notificationText">Mensagem de notificação</span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script>
+        // Verificar status de conexão
+        window.addEventListener('online', function() {
+            document.body.classList.remove('offline');
+            showNotification('Você está online novamente!');
+        });
+        
+        window.addEventListener('offline', function() {
+            document.body.classList.add('offline');
+            showNotification('Você está offline. Alguns recursos podem não estar disponíveis.');
+        });
+        
+        // Função para mostrar notificações
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(function() {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+/* Personalização de cores - Sistema de temas */
+:root {
+    /* Tema padrão - Azul */
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --accent-color: #e74c3c;
+    --background-color: #f5f7fa;
+    --card-background: #ffffff;
+    --text-color: #333333;
+    --light-gray: #f1f1f1;
+    --medium-gray: #e0e0e0;
+    --dark-gray: #777777;
+    --white: #ffffff;
+    --black: #000000;
+    --border-radius: 8px;
+    --card-radius: 12px;
+    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+/* Tema Verde */
+[data-theme="green"] {
+    --primary-color: #27ae60;
+    --secondary-color: #2ecc71;
+    --accent-color: #f39c12;
+    --background-color: #f0f6f0;
+    --card-background: #ffffff;
+    --text-color: #333333;
+}
+
+/* Tema Roxo */
+[data-theme="purple"] {
+    --primary-color: #9b59b6;
+    --secondary-color: #8e44ad;
+    --accent-color: #f1c40f;
+    --background-color: #f5f0fa;
+    --card-background: #ffffff;
+    --text-color: #333333;
+}
+
+/* Tema Laranja */
+[data-theme="orange"] {
+    --primary-color: #e67e22;
+    --secondary-color: #d35400;
+    --accent-color: #3498db;
+    --background-color: #faf5f0;
+    --card-background: #ffffff;
+    --text-color: #333333;
+}
+
+/* Tema Escuro */
+[data-theme="dark"] {
+    --primary-color: #3498db;
+    --secondary-color: #2980b9;
+    --accent-color: #e74c3c;
+    --background-color: #1a1a1a;
+    --card-background: #2c2c2c;
+    --text-color: #f0f0f0;
+    --light-gray: #333333;
+    --medium-gray: #444444;
+    --dark-gray: #aaaaaa;
+    --white: #2c2c2c;
+    --black: #f0f0f0;
+}
+
+/* Tema Alto Contraste */
+[data-theme="high-contrast"] {
+    --primary-color: #ffff00;
+    --secondary-color: #ffffff;
+    --accent-color: #00ff00;
+    --background-color: #000000;
+    --card-background: #000000;
+    --text-color: #ffffff;
+    --light-gray: #333333;
+    --medium-gray: #444444;
+    --dark-gray: #ffffff;
+    --white: #000000;
+    --black: #ffffff;
+    --card-shadow: 0 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Seletor de temas */
+.theme-selector {
+    position: fixed;
+    right: 20px;
+    top: 80px;
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 15px;
+    z-index: 100;
+    display: none;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.theme-selector.show {
+    display: block;
+}
+
+.theme-selector h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    transition: background-color 0.2s ease;
+}
+
+.theme-option:hover {
+    background-color: var(--light-gray);
+}
+
+.theme-option.active {
+    background-color: var(--medium-gray);
+}
+
+.color-preview {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+.theme-option span {
+    font-size: 0.8rem;
+    color: var(--text-color);
+}
+
+/* Previews de cores para cada tema */
+.color-preview.default {
+    background-color: #3498db;
+}
+
+.color-preview.green {
+    background-color: #27ae60;
+}
+
+.color-preview.purple {
+    background-color: #9b59b6;
+}
+
+.color-preview.orange {
+    background-color: #e67e22;
+}
+
+.color-preview.dark {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+}
+
+.color-preview.high-contrast {
+    background-color: #000000;
+    border: 1px solid #ffff00;
+}

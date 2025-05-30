@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página offline da Biblioteca de Documentos Escolares">
+    <title>Você está offline - Biblioteca de Documentos Escolares</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <style>
+        .offline-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .offline-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .offline-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        
+        .offline-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+        
+        .offline-documents {
+            margin-top: 40px;
+            text-align: left;
+        }
+        
+        .offline-documents h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-align: center;
+        }
+        
+        .offline-documents-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .offline-document-card {
+            background-color: var(--card-background);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .offline-document-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+        
+        .offline-document-info h3 {
+            margin: 0 0 5px 0;
+            color: var(--text-color);
+        }
+        
+        .offline-document-info p {
+            margin: 0;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .retry-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .retry-button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .empty-offline {
+            text-align: center;
+            padding: 30px;
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path>
+                <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+                <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+                <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
+            </svg>
+        </div>
+        <h1 class="offline-title">Você está offline</h1>
+        <p class="offline-message">Não foi possível conectar à internet. Você ainda pode acessar documentos que foram visualizados anteriormente.</p>
+        
+        <button id="retryConnection" class="retry-button">Tentar novamente</button>
+        
+        <div class="offline-documents">
+            <h2>Documentos disponíveis offline</h2>
+            <div id="offlineDocumentsList" class="offline-documents-list">
+                <!-- Documentos offline serão carregados aqui via JavaScript -->
+                <p class="empty-offline">Nenhum documento disponível offline.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Verificar conexão
+        document.getElementById('retryConnection').addEventListener('click', function() {
+            window.location.reload();
+        });
+        
+        // Carregar documentos disponíveis offline
+        document.addEventListener('DOMContentLoaded', function() {
+            const offlineDocumentsList = document.getElementById('offlineDocumentsList');
+            
+            // Verificar documentos em cache
+            if ('caches' in window) {
+                caches.open('biblioteca-digital-v1').then(function(cache) {
+                    cache.keys().then(function(requests) {
+                        const pdfRequests = requests.filter(request => request.url.endsWith('.pdf'));
+                        
+                        if (pdfRequests.length > 0) {
+                            offlineDocumentsList.innerHTML = '';
+                            
+                            pdfRequests.forEach(function(request) {
+                                const url = request.url;
+                                const filename = url.substring(url.lastIndexOf('/') + 1);
+                                const title = decodeURIComponent(filename.replace('.pdf', '').replace(/-/g, ' '));
+                                
+                                const documentCard = document.createElement('div');
+                                documentCard.className = 'offline-document-card';
+                                documentCard.innerHTML = `
+                                    <div class="offline-document-icon">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <path d="M9 15L9 9"></path>
+                                            <path d="M12 12L12 15"></path>
+                                            <path d="M15 15L15 12"></path>
+                                            <path d="M9 12H12"></path>
+                                            <path d="M15 9H15"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="offline-document-info">
+                                        <h3>${title}</h3>
+                                        <p>Disponível offline</p>
+                                    </div>
+                                `;
+                                
+                                documentCard.addEventListener('click', function() {
+                                    window.location.href = url;
+                                });
+                                
+                                offlineDocumentsList.appendChild(documentCard);
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

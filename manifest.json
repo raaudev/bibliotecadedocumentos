@@ -1,0 +1,43 @@
+{
+  "name": "Biblioteca de Documentos Escolares",
+  "short_name": "Biblioteca",
+  "description": "Acesse e baixe documentos escolares como regulamentos, calendários e listas de materiais",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#3498db",
+  "icons": [
+    {
+      "src": "assets/icons/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "orientation": "any",
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Regulamentos",
+      "url": "/index.html#regulamentos",
+      "icons": [{ "src": "assets/icons/regulamentos-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Calendário Escolar",
+      "url": "/index.html#calendario",
+      "icons": [{ "src": "assets/icons/calendario-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Listas de Materiais",
+      "url": "/index.html#materiais",
+      "icons": [{ "src": "assets/icons/materiais-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "offline_page": "/offline.html"
+}
